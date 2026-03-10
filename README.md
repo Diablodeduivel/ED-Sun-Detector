@@ -92,33 +92,22 @@ python ed_sun_detector.py
 
 The app starts capturing immediately. You'll see a live preview, a star color swatch, and an intensity bar.
 
-### Arduino sketch
+### Arduino fan control (optional)
 
-1. Open `ed_fan_control.ino` in the Arduino IDE
-2. Upload to your Arduino
-3. Wire your fan's PWM wire (blue) to **pin 9**, fan power to 12V, GND to GND and Arduino GND
-4. In the app, tick **Arduino serial**, pick your COM port, done
-
-Tune `MIN_SPEED` in the sketch if your fan stalls at low values — typically around 70–90 for most fans.
+PWM fan control is handled through **SimHub's built-in Arduino configurator** — no manual sketch uploading needed. Wire your fan to an Arduino, configure it as a PWM fan output in SimHub, and bind the `[SunDetectorPlugin.SunIntensity]` property to the fan channel.
 
 ### SimHub plugin
 
-> Only needed if you want to bind sun intensity to SimHub effects (bass shakers, LEDs, etc.)
+> Only needed if you want to bind sun intensity to SimHub effects (bass shakers, LEDs, fan control, etc.)
 
-1. Build the plugin:
-```
-cd SunDetectorPlugin
-dotnet build -c Release
-```
+The plugin ships **pre-built** in this repo. Just copy the DLL into your SimHub folder (run as admin):
 
-2. Copy the DLL (run as admin):
 ```
-copy "bin\Release\net48\SunDetectorPlugin.dll" "C:\Program Files (x86)\SimHub\"
+copy "SunDetectorPlugin.dll" "C:\Program Files (x86)\SimHub\"
 ```
 
-3. Restart SimHub. The plugin appears automatically.
+Restart SimHub — the plugin appears automatically. In ShakeIt / LED effects, add a custom effect with the formula:
 
-4. In SimHub → ShakeIt / LED effects, add a custom effect and use the formula:
 ```
 [SunDetectorPlugin.SunIntensity]
 ```
@@ -131,8 +120,8 @@ copy "bin\Release\net48\SunDetectorPlugin.dll" "C:\Program Files (x86)\SimHub\"
 - **Intensity bar** — how strongly a star is detected (0–100%)
 - **Star color swatch** — dominant color of the detected pixels (helps you see which star profile matched)
 - **Sensitivity slider** — lower = triggers earlier/easier; default 4%
-- **SimHub JSON toggle** — enable/disable writing the status file
-- **Arduino serial toggle** — pick a COM port and connect your fan controller
+- **SimHub JSON toggle** — enable/disable writing the status file to control it via SimHub
+- **Arduino serial toggle** — enable/disable a COM port and connect your fan controller
 - **Test fan button** — ramps from full speed down to 0 so you can verify wiring
 
 ---
@@ -143,19 +132,6 @@ copy "bin\Release\net48\SunDetectorPlugin.dll" "C:\Program Files (x86)\SimHub\"
 - If it misses dim red/brown dwarfs, **lower the sensitivity**
 - The swatch color tells you which profile matched — if something non-star is triggering, note the RGB values and open an issue
 - Fan starts ramping from the moment any star pixels appear; full speed kicks in around 30% screen coverage (square root curve)
-
----
-
-## File overview
-
-```
-ed_sun_detector.py        Python GUI app — run this
-ed_fan_control.ino        Arduino sketch for PWM fan
-SunDetectorPlugin/
-  SunDetectorPlugin.cs    SimHub C# plugin source
-  SunDetectorPlugin.csproj
-README.md
-```
 
 ---
 
